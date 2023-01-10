@@ -17,6 +17,8 @@
 package com.google.mlkit.vision.demo.java.posedetector.classification;
 
 import android.content.Context;
+import android.graphics.Point;
+import android.graphics.PointF;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Looper;
@@ -24,6 +26,8 @@ import android.util.Log;
 import androidx.annotation.WorkerThread;
 import com.google.common.base.Preconditions;
 import com.google.mlkit.vision.pose.Pose;
+import com.google.mlkit.vision.pose.PoseLandmark;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -53,6 +57,7 @@ public class PoseClassifierProcessor {
   private List<RepetitionCounter> repCounters;
   private PoseClassifier poseClassifier;
   private String lastRepResult;
+
 
   @WorkerThread
   public PoseClassifierProcessor(Context context, boolean isStreamMode) {
@@ -141,9 +146,84 @@ public class PoseClassifierProcessor {
           classification.getClassConfidence(maxConfidenceClass)
               / poseClassifier.confidenceRange());
       result.add(maxConfidenceClassResult);
+      if(maxConfidenceClassResult == PUSHUPS_CLASS){
+        checkPushupPosture(pose);
+      }
+      else {
+        checkSquatPosture(pose);
+      }
     }
 
     return result;
+  }
+
+  private void checkPushupPosture(Pose pose){
+    PointF shoulderPos = pose.getPoseLandmark(PoseLandmark.LEFT_SHOULDER).getPosition();
+    PointF hipPos = pose.getPoseLandmark(PoseLandmark.LEFT_HIP).getPosition();
+    PointF heelPos = pose.getPoseLandmark(PoseLandmark.LEFT_HEEL).getPosition();
+    PointF wristPos = pose.getPoseLandmark(PoseLandmark.LEFT_WRIST).getPosition();
+    PointF kneePos = pose.getPoseLandmark(PoseLandmark.LEFT_KNEE).getPosition();
+    PointF elbowPos = pose.getPoseLandmark(PoseLandmark.LEFT_ELBOW).getPosition();
+
+    checkAligned(hipPos,heelPos,kneePos,elbowPos,wristPos,shoulderPos);
+
+
+  }
+  static boolean isStraightLinePossible(
+          ArrayList<PointF> arr, int n)
+  {
+
+    // First pair of point (x0, y0)
+    float x0 = arr.get(0).x;
+    float y0 = arr.get(0).y;
+
+    // Second pair of point (x1, y1)
+    float x1 = arr.get(1).x;
+    float y1 = arr.get(1).y;
+
+    float dx = x1 - x0, dy = y1 - y0;
+
+    // Loop to iterate over the points
+    for(int i = 0; i < n; i++)
+    {
+      float x = arr.get(i).x;
+      float y = arr.get(i).y;
+      if (dx * (y - y1) != dy * (x - x1))
+      {
+        System.out.println("NO");
+        return false;
+      }
+    }
+    System.out.println("YES");
+    return true;
+  }
+  //TODO maybe this needs to be a bool functionhipPos
+
+  private void checkAligned(PointF hipPos, PointF heelPos, PointF kneePos, PointF elbowPos,PointF wristPos,PointF shoulderPos){
+    ArrayList<PointF> arr = new ArrayList<>();
+    arr.add(hipPos);
+    arr.add(heelPos);
+    arr.add(kneePos);
+    arr.add(elbowPos);
+    if(isStraightLinePossible(arr,arr.size())){
+      System.out.println("THE BODY IS ALIGNED");
+    }
+    else {
+      System.out.println("THE BODY IS NOT ALIGNED");
+    }
+    ArrayList<PointF> arr2 = new ArrayList<>();
+    arr2.add(wristPos);
+    arr2.add(shoulderPos);
+    if(isStraightLinePossible(arr2,arr2.size())){
+      System.out.println("THE ARMS ARE ALIGNED");
+    }
+    else{
+      System.out.println("THE ARMS ARE NOT ALIGNED");
+    }
+  }
+
+  private void checkSquatPosture(Pose pose){
+
   }
 
 }
