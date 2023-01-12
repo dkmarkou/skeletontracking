@@ -66,6 +66,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.google.mlkit.vision.demo.java.FeedbackActivity"
+            android:exported="false" >
+        </activity>
+        <activity
             android:name="com.google.mlkit.vision.demo.java.ChooserActivity"
             android:exported="false" >
         </activity>

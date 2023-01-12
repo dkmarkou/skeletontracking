@@ -17,6 +17,8 @@
 package com.google.mlkit.vision.demo.java.posedetector.classification;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.media.AudioManager;
@@ -25,6 +27,7 @@ import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.WorkerThread;
 import com.google.common.base.Preconditions;
+import com.google.mlkit.vision.demo.java.posedetector.PoseGraphic;
 import com.google.mlkit.vision.pose.Pose;
 import com.google.mlkit.vision.pose.PoseLandmark;
 
@@ -34,6 +37,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Accepts a stream of {@link Pose} for classification and Rep counting.
@@ -146,18 +150,12 @@ public class PoseClassifierProcessor {
           classification.getClassConfidence(maxConfidenceClass)
               / poseClassifier.confidenceRange());
       result.add(maxConfidenceClassResult);
-      if(maxConfidenceClassResult == PUSHUPS_CLASS){
-        checkPushupPosture(pose);
-      }
-      else {
-        checkSquatPosture(pose);
-      }
     }
 
     return result;
   }
 
-  private void checkPushupPosture(Pose pose){
+  public static boolean checkPushupPosture(Pose pose){
     PointF shoulderPos = pose.getPoseLandmark(PoseLandmark.LEFT_SHOULDER).getPosition();
     PointF hipPos = pose.getPoseLandmark(PoseLandmark.LEFT_HIP).getPosition();
     PointF heelPos = pose.getPoseLandmark(PoseLandmark.LEFT_HEEL).getPosition();
@@ -165,7 +163,7 @@ public class PoseClassifierProcessor {
     PointF kneePos = pose.getPoseLandmark(PoseLandmark.LEFT_KNEE).getPosition();
     PointF elbowPos = pose.getPoseLandmark(PoseLandmark.LEFT_ELBOW).getPosition();
 
-    checkAligned(hipPos,heelPos,kneePos,elbowPos,wristPos,shoulderPos);
+    return checkAligned(hipPos,heelPos,kneePos,elbowPos,wristPos,shoulderPos,pose);
 
 
   }
@@ -199,18 +197,24 @@ public class PoseClassifierProcessor {
   }
   //TODO maybe this needs to be a bool functionhipPos
 
-  private void checkAligned(PointF hipPos, PointF heelPos, PointF kneePos, PointF elbowPos,PointF wristPos,PointF shoulderPos){
+  public static boolean checkAligned(PointF hipPos, PointF heelPos, PointF kneePos, PointF elbowPos,PointF wristPos,PointF shoulderPos,Pose pose){
+
+    Log.d("tag1","3");
     ArrayList<PointF> arr = new ArrayList<>();
     arr.add(hipPos);
     arr.add(heelPos);
     arr.add(kneePos);
-    arr.add(elbowPos);
+    arr.add(shoulderPos);
     if(isStraightLinePossible(arr,arr.size())){
       System.out.println("THE BODY IS ALIGNED");
+      return true;
     }
     else {
+      //PoseGraphic.drawCorrectLinePushup();
       System.out.println("THE BODY IS NOT ALIGNED");
+      return false;
     }
+    /*
     ArrayList<PointF> arr2 = new ArrayList<>();
     arr2.add(wristPos);
     arr2.add(shoulderPos);
@@ -220,9 +224,11 @@ public class PoseClassifierProcessor {
     else{
       System.out.println("THE ARMS ARE NOT ALIGNED");
     }
+     */
+
   }
 
-  private void checkSquatPosture(Pose pose){
+  public static void checkSquatPosture(Pose pose){
 
   }
 

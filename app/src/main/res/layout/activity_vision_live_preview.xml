@@ -47,7 +47,12 @@
         android:checked="false"
         android:textOff=""
         android:textOn=""/>
-
+    <Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+        android:id="@+id/feedback_button"
+        android:text="Feedback"
+    />
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="0dp"

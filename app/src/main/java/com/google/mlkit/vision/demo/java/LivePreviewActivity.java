@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -87,6 +88,7 @@ public final class LivePreviewActivity extends AppCompatActivity
   private CameraSourcePreview preview;
   private GraphicOverlay graphicOverlay;
   private String selectedModel = OBJECT_DETECTION;
+  private Button buttonFeedback;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +96,17 @@ public final class LivePreviewActivity extends AppCompatActivity
     Log.d(TAG, "onCreate");
 
     setContentView(R.layout.activity_vision_live_preview);
+
+    buttonFeedback = findViewById(R.id.feedback_button);
+
+
+    buttonFeedback.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Intent intent = new Intent(LivePreviewActivity.this, FeedbackActivity.class);
+        startActivity(intent);
+      }
+    });
 
     preview = findViewById(R.id.preview_view);
     if (preview == null) {

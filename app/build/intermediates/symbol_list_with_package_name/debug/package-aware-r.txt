@@ -1014,6 +1014,8 @@ id expand_activities_button
 id expanded_menu
 id facing_switch
 id feature_selector
+id feedback_button
+id feedback_view
 id fillCenter
 id fillEnd
 id fillStart
@@ -1225,6 +1227,7 @@ layout activity_vision_cameraxsource_demo
 layout activity_vision_entry_choice
 layout activity_vision_live_preview
 layout custom_dialog
+layout feedback_activity
 layout notification_action
 layout notification_action_tombstone
 layout notification_template_custom_big
